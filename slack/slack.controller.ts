@@ -61,17 +61,11 @@ export class SlackMessageBotController {
     type: MessageBotChannelListResDto,
   })
   async channelList(@Query() query: MessageBotChannelListReqDto) {
-    const {page, pageSize, accessKeyId, platform} = query;
+    const {page, pageSize, platform} = query;
     return this.prisma.findManyInManyPages({
       model: Prisma.ModelName.MessageBotChannel,
       pagination: {page, pageSize},
-      findManyArgs: {
-        where: {
-          deletedAt: null,
-          accessKeyId,
-          platform,
-        },
-      },
+      findManyArgs: {where: {deletedAt: null, platform}},
     });
   }
 

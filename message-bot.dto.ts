@@ -58,14 +58,6 @@ export class MessageBotChannelUpdateReqDto {
 
 export class MessageBotChannelListReqDto extends CommonPaginationReqDto {
   @ApiProperty({
-    type: Number,
-  })
-  @IsNotEmpty()
-  @IsNumber()
-  @Type(() => Number)
-  accessKeyId: number;
-
-  @ApiProperty({
     type: String,
     enum: MessageBotPlatform,
   })
