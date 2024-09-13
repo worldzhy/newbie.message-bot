@@ -57,12 +57,7 @@ export class MessageBotChannelUpdateReqDto {
 }
 
 export class MessageBotChannelListReqDto extends CommonPaginationReqDto {
-  @ApiProperty({
-    type: String,
-    enum: MessageBotPlatform,
-  })
-  @IsString()
-  platform: string;
+
 }
 
 export class MessageBotChannelDetailResDto {

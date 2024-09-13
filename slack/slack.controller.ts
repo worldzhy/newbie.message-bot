@@ -12,6 +12,7 @@ import {
   MessageBotRecordListReqDto,
   MessageBotRecordListResDto,
 } from '../message-bot.dto';
+import {MessageBotPlatform} from '../message-bot.constants';
 import {SlackMessageBotReqDto, SlackMessageBotResDto} from './slack.dto';
 
 @ApiTags('Message Bot')
@@ -61,11 +62,11 @@ export class SlackMessageBotController {
     type: MessageBotChannelListResDto,
   })
   async channelList(@Query() query: MessageBotChannelListReqDto) {
-    const {page, pageSize, platform} = query;
+    const {page, pageSize} = query;
     return this.prisma.findManyInManyPages({
       model: Prisma.ModelName.MessageBotChannel,
       pagination: {page, pageSize},
-      findManyArgs: {where: {deletedAt: null, platform}},
+      findManyArgs: {where: {deletedAt: null, platform: MessageBotPlatform.Slack}},
     });
   }
 
