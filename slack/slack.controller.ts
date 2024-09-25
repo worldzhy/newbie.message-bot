@@ -88,11 +88,11 @@ export class SlackMessageBotController {
     });
   }
 
-  @Post('record/send')
+  @Post('send')
   @ApiResponse({
     type: SlackMessageBotResDto,
   })
-  async slackWebhook(body: SlackMessageBotReqDto) {
+  async send(@Body() body: SlackMessageBotReqDto) {
     return await this.slackMessageBotService.send(body);
   }
 }

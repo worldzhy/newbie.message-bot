@@ -86,11 +86,11 @@ export class LarkMessageBotController {
     });
   }
 
-  @Post('record/send')
+  @Post('send')
   @ApiResponse({
     type: LarkMessageBotResDto,
   })
-  async sendRecord(body: LarkMessageBotReqDto) {
+  async send(@Body() body: LarkMessageBotReqDto) {
     return await this.larkMessageBotService.send(body);
   }
 }
