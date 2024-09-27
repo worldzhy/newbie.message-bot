@@ -3,15 +3,15 @@ import {AxiosResponse, AxiosError} from 'axios';
 import {Injectable, BadRequestException} from '@nestjs/common';
 import {PrismaService} from '@framework/prisma/prisma.service';
 import {
+  SlackMessageBotReqDto,
+  SlackMessageBotResDto,
+  SlackWebhookPostResDto,
+  SlackWebhookPostBodyDto,
+} from './slack.dto';
+import {
   MessageBotChannelCreateReqDto,
   MessageBotChannelUpdateReqDto,
 } from '../message-bot.dto';
-import {
-  SlackMessageBotReqDto,
-  SlackWebhookPostBodyDto,
-  SlackMessageBotResDto,
-  SlackWebhookPostResDto,
-} from './slack.dto';
 import {
   MessageBotPlatform,
   MessageBotRecordStatus,
@@ -61,7 +61,7 @@ export class SlackMessageBotService {
     });
   }
 
-  async send(req: SlackMessageBotReqDto) {
+  async send(req: SlackMessageBotReqDto): Promise<SlackMessageBotResDto> {
     const {channelName, body} = req;
     const channel = await this.prisma.messageBotChannel.findUniqueOrThrow({
       where: {

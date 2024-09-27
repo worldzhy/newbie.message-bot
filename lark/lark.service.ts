@@ -10,13 +10,13 @@ import {
   LarkWebhookPostBodyDto,
 } from './lark.dto';
 import {
-  MessageBotPlatform,
-  MessageBotRecordStatus,
-} from '../message-bot.constants';
-import {
   MessageBotChannelCreateReqDto,
   MessageBotChannelUpdateReqDto,
 } from '../message-bot.dto';
+import {
+  MessageBotPlatform,
+  MessageBotRecordStatus,
+} from '../message-bot.constants';
 
 @Injectable()
 export class LarkMessageBotService {
@@ -56,14 +56,17 @@ export class LarkMessageBotService {
     });
   }
 
-  async sendText(params: {channelName: string; text: string}) {
+  async sendText(params: {
+    channelName: string;
+    text: string;
+  }): Promise<LarkMessageBotResDto> {
     return await this.send({
       channelName: params.channelName,
       body: {msg_type: 'text', content: {text: params.text}},
     });
   }
 
-  async send(req: LarkMessageBotReqDto) {
+  async send(req: LarkMessageBotReqDto): Promise<LarkMessageBotResDto> {
     const {channelName, body} = req;
     const channel = await this.prisma.messageBotChannel.findUniqueOrThrow({
       where: {

@@ -5,10 +5,7 @@ import {
   CommonPaginationReqDto,
   CommonPaginationResDto,
 } from '@framework/common.dto';
-import {
-  MessageBotPlatform,
-  MessageBotRecordStatus,
-} from './message-bot.constants';
+import {MessageBotRecordStatus} from './message-bot.constants';
 
 export class MessageBotChannelCreateReqDto {
   @ApiProperty({
@@ -56,9 +53,7 @@ export class MessageBotChannelUpdateReqDto {
   webhook?: string;
 }
 
-export class MessageBotChannelListReqDto extends CommonPaginationReqDto {
-
-}
+export class MessageBotChannelListReqDto extends CommonPaginationReqDto {}
 
 export class MessageBotChannelDetailResDto {
   @ApiProperty({
