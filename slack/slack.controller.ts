@@ -5,15 +5,19 @@ import {Prisma} from '@prisma/client';
 import {SlackMessageBotService} from '@microservices/message-bot/slack/slack.service';
 import {CommonCUDResDto} from '@framework/common.dto';
 import {
-  MessageBotChannelCreateReqDto,
-  MessageBotChannelUpdateReqDto,
-  MessageBotChannelListReqDto,
-  MessageBotChannelListResDto,
-  MessageBotRecordListReqDto,
-  MessageBotRecordListResDto,
+  MessageBotCreateChannelReqDto,
+  MessageBotUpdateChannelReqDto,
+  MessageBotListChannelsReqDto,
+  MessageBotListChannelsResDto,
+  MessageBotListMessagesReqDto,
+  MessageBotListMessagesResDto,
 } from '../message-bot.dto';
 import {MessageBotPlatform} from '../message-bot.constants';
-import {SlackMessageBotReqDto, SlackMessageBotResDto} from './slack.dto';
+import {
+  SlackMessageBotSendMessageReqDto,
+  SlackMessageBotSendMessageResDto,
+  SlackMessageBotSendTextMessageReqDto,
+} from './slack.dto';
 
 @ApiTags('Message Bot')
 @ApiBearerAuth()
@@ -24,57 +28,59 @@ export class SlackMessageBotController {
     private readonly prisma: PrismaService
   ) {}
 
-  @Post('channel/create')
+  @Post('channels/create')
   @ApiResponse({
     type: CommonCUDResDto,
   })
   async channelCreate(
     @Body()
-    body: MessageBotChannelCreateReqDto
+    body: MessageBotCreateChannelReqDto
   ) {
     return await this.slackMessageBotService.createChannel(body);
   }
 
-  @Post('channel/update')
+  @Post('channels/update')
   @ApiResponse({
     type: CommonCUDResDto,
   })
   async channelUpdate(
     @Body()
-    body: MessageBotChannelUpdateReqDto
+    body: MessageBotUpdateChannelReqDto
   ) {
     return await this.slackMessageBotService.updateChannel(body);
   }
 
-  @Post('channel/delete')
+  @Post('channels/delete')
   @ApiResponse({
     type: CommonCUDResDto,
   })
   async channelDelete(
     @Body()
-    body: MessageBotChannelUpdateReqDto
+    body: MessageBotUpdateChannelReqDto
   ) {
     return await this.slackMessageBotService.deleteChannel(body);
   }
 
-  @Get('channel/list')
+  @Get('channels/list')
   @ApiResponse({
-    type: MessageBotChannelListResDto,
+    type: MessageBotListChannelsResDto,
   })
-  async channelList(@Query() query: MessageBotChannelListReqDto) {
+  async channelList(@Query() query: MessageBotListChannelsReqDto) {
     const {page, pageSize} = query;
     return this.prisma.findManyInManyPages({
       model: Prisma.ModelName.MessageBotChannel,
       pagination: {page, pageSize},
-      findManyArgs: {where: {deletedAt: null, platform: MessageBotPlatform.Slack}},
+      findManyArgs: {
+        where: {deletedAt: null, platform: MessageBotPlatform.Slack},
+      },
     });
   }
 
-  @Get('record/list')
+  @Get('messages/list')
   @ApiResponse({
-    type: MessageBotRecordListResDto,
+    type: MessageBotListMessagesResDto,
   })
-  async recordList(@Query() query: MessageBotRecordListReqDto) {
+  async recordList(@Query() query: MessageBotListMessagesReqDto) {
     const {page, pageSize, channelId} = query;
     return this.prisma.findManyInManyPages({
       model: Prisma.ModelName.MessageBotRecord,
@@ -88,11 +94,19 @@ export class SlackMessageBotController {
     });
   }
 
-  @Post('send')
+  @Post('messages/send')
   @ApiResponse({
-    type: SlackMessageBotResDto,
+    type: SlackMessageBotSendMessageResDto,
   })
-  async send(@Body() body: SlackMessageBotReqDto) {
-    return await this.slackMessageBotService.send(body);
+  async send(@Body() body: SlackMessageBotSendMessageReqDto) {
+    return await this.slackMessageBotService.sendMessage(body);
   }
+
+  // @Post('messages/send-text')
+  // @ApiResponse({
+  //   type: SlackMessageBotSendMessageResDto,
+  // })
+  // async sendText(@Body() body: SlackMessageBotSendTextMessageReqDto) {
+  //   return await this.slackMessageBotService.sendText(body);
+  // }
 }

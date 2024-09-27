@@ -1,17 +1,19 @@
 import {HttpService} from '@nestjs/axios';
-import {AxiosResponse, AxiosError} from 'axios';
+import {AxiosError, AxiosResponse} from 'axios';
 import {Injectable, BadRequestException} from '@nestjs/common';
 import {PrismaService} from '@framework/prisma/prisma.service';
 import {
-  SlackMessageBotReqDto,
-  SlackMessageBotResDto,
-  SlackWebhookPostResDto,
-  SlackWebhookPostBodyDto,
+  SlackMessageBotSendMessageReqDto,
+  SlackMessageBotSendMessageResDto,
 } from './slack.dto';
 import {
-  MessageBotChannelCreateReqDto,
-  MessageBotChannelUpdateReqDto,
+  MessageBotCreateChannelReqDto,
+  MessageBotUpdateChannelReqDto,
 } from '../message-bot.dto';
+import {
+  SlackMessageBotSendMessageReqBody,
+  SlackMessageBotSendMessageRes,
+} from './slack.interface';
 import {
   MessageBotPlatform,
   MessageBotRecordStatus,
@@ -25,7 +27,7 @@ export class SlackMessageBotService {
   ) {}
 
   async createChannel(
-    body: MessageBotChannelCreateReqDto
+    body: MessageBotCreateChannelReqDto
   ): Promise<{id: number}> {
     const {name} = body;
     const channel = await this.prisma.messageBotChannel.findFirst({
@@ -41,7 +43,7 @@ export class SlackMessageBotService {
   }
 
   async updateChannel(
-    body: MessageBotChannelUpdateReqDto
+    body: MessageBotUpdateChannelReqDto
   ): Promise<{id: number}> {
     const {id} = body;
     return await this.prisma.messageBotChannel.update({
@@ -51,7 +53,7 @@ export class SlackMessageBotService {
   }
 
   async deleteChannel(
-    body: MessageBotChannelUpdateReqDto
+    body: MessageBotUpdateChannelReqDto
   ): Promise<{id: number}> {
     const {id} = body;
 
@@ -61,7 +63,9 @@ export class SlackMessageBotService {
     });
   }
 
-  async send(req: SlackMessageBotReqDto): Promise<SlackMessageBotResDto> {
+  async sendMessage(
+    req: SlackMessageBotSendMessageReqDto
+  ): Promise<SlackMessageBotSendMessageResDto> {
     const {channelName, body} = req;
     const channel = await this.prisma.messageBotChannel.findUniqueOrThrow({
       where: {
@@ -80,17 +84,18 @@ export class SlackMessageBotService {
       },
     });
 
-    const result: SlackMessageBotResDto = await this.httpService.axiosRef
-      .post<SlackWebhookPostBodyDto, AxiosResponse<SlackWebhookPostResDto>>(
-        channel.webhook,
-        body
-      )
-      .then(res => {
-        return {res: res.data};
-      })
-      .catch((e: AxiosError) => {
-        return {error: {message: e.response?.data}};
-      });
+    const result: SlackMessageBotSendMessageResDto =
+      await this.httpService.axiosRef
+        .post<
+          SlackMessageBotSendMessageReqBody,
+          AxiosResponse<SlackMessageBotSendMessageRes>
+        >(channel.webhook, body)
+        .then(res => {
+          return {res: res.data};
+        })
+        .catch((e: AxiosError) => {
+          return {error: {message: e.response?.data}};
+        });
 
     await this.prisma.messageBotRecord.update({
       where: {id: newRecord.id},
@@ -104,4 +109,14 @@ export class SlackMessageBotService {
 
     return result;
   }
+
+  // async sendText(params: {
+  //   channelName: string;
+  //   text: string;
+  // }): Promise<SlackMessageBotSendMessageResDto> {
+  //   return await this.sendMessage({
+  //     channelName: params.channelName,
+  //     body: {msg_type: 'text', content: {text: params.text}},
+  //   });
+  // }
 }

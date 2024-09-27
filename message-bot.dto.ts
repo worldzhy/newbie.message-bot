@@ -7,7 +7,7 @@ import {
 } from '@framework/common.dto';
 import {MessageBotRecordStatus} from './message-bot.constants';
 
-export class MessageBotChannelCreateReqDto {
+export class MessageBotCreateChannelReqDto {
   @ApiProperty({
     type: String,
   })
@@ -29,7 +29,7 @@ export class MessageBotChannelCreateReqDto {
   description?: string;
 }
 
-export class MessageBotChannelUpdateReqDto {
+export class MessageBotUpdateChannelReqDto {
   @ApiProperty({
     type: Number,
   })
@@ -53,7 +53,7 @@ export class MessageBotChannelUpdateReqDto {
   webhook?: string;
 }
 
-export class MessageBotChannelListReqDto extends CommonPaginationReqDto {}
+export class MessageBotListChannelsReqDto extends CommonPaginationReqDto {}
 
 export class MessageBotChannelDetailResDto {
   @ApiProperty({
@@ -92,7 +92,30 @@ export class MessageBotChannelDetailResDto {
   updatedAt: Date;
 }
 
-export class MessageBotRecordDetailResDto {
+export class MessageBotListChannelsResDto {
+  @ApiProperty({
+    type: MessageBotChannelDetailResDto,
+    isArray: true,
+  })
+  records: MessageBotChannelDetailResDto[];
+
+  @ApiProperty({
+    type: CommonPaginationResDto,
+  })
+  pagination: CommonPaginationResDto;
+}
+
+export class MessageBotListMessagesReqDto extends CommonPaginationReqDto {
+  @ApiProperty({
+    type: Number,
+  })
+  @IsNotEmpty()
+  @IsNumber()
+  @Type(() => Number)
+  channelId: number;
+}
+
+class MessageBotRecordDetailResDto {
   @ApiProperty({
     type: String,
   })
@@ -134,30 +157,7 @@ export class MessageBotRecordDetailResDto {
   updatedAt: Date;
 }
 
-export class MessageBotChannelListResDto {
-  @ApiProperty({
-    type: MessageBotChannelDetailResDto,
-    isArray: true,
-  })
-  records: MessageBotChannelDetailResDto[];
-
-  @ApiProperty({
-    type: CommonPaginationResDto,
-  })
-  pagination: CommonPaginationResDto;
-}
-
-export class MessageBotRecordListReqDto extends CommonPaginationReqDto {
-  @ApiProperty({
-    type: Number,
-  })
-  @IsNotEmpty()
-  @IsNumber()
-  @Type(() => Number)
-  channelId: number;
-}
-
-export class MessageBotRecordListResDto {
+export class MessageBotListMessagesResDto {
   @ApiProperty({
     type: MessageBotRecordDetailResDto,
     isArray: true,

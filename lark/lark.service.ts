@@ -4,15 +4,17 @@ import {Injectable, BadRequestException} from '@nestjs/common';
 import {PrismaService} from '@framework/prisma/prisma.service';
 import {LarkWebhookSendStatus} from './lark.constants';
 import {
-  LarkMessageBotReqDto,
-  LarkMessageBotResDto,
-  LarkWebhookPostResDto,
-  LarkWebhookPostBodyDto,
+  LarkMessageBotSendMessageReqDto,
+  LarkMessageBotSendMessageResDto,
 } from './lark.dto';
 import {
-  MessageBotChannelCreateReqDto,
-  MessageBotChannelUpdateReqDto,
+  MessageBotCreateChannelReqDto,
+  MessageBotUpdateChannelReqDto,
 } from '../message-bot.dto';
+import {
+  LarkMessageBotSendMessageRes,
+  LarkMessageBotSendMessageReqBody,
+} from './lark.interface';
 import {
   MessageBotPlatform,
   MessageBotRecordStatus,
@@ -25,7 +27,7 @@ export class LarkMessageBotService {
     private readonly prisma: PrismaService
   ) {}
 
-  async createChannel(body: MessageBotChannelCreateReqDto) {
+  async createChannel(body: MessageBotCreateChannelReqDto) {
     const {name} = body;
     const channel = await this.prisma.messageBotChannel.findFirst({
       where: {name, platform: MessageBotPlatform.Lark},
@@ -39,7 +41,7 @@ export class LarkMessageBotService {
     });
   }
 
-  async updateChannel(body: MessageBotChannelUpdateReqDto) {
+  async updateChannel(body: MessageBotUpdateChannelReqDto) {
     const {id} = body;
     return await this.prisma.messageBotChannel.update({
       where: {id},
@@ -47,7 +49,7 @@ export class LarkMessageBotService {
     });
   }
 
-  async deleteChannel(body: MessageBotChannelUpdateReqDto) {
+  async deleteChannel(body: MessageBotUpdateChannelReqDto) {
     const {id} = body;
 
     return await this.prisma.messageBotChannel.update({
@@ -56,17 +58,9 @@ export class LarkMessageBotService {
     });
   }
 
-  async sendText(params: {
-    channelName: string;
-    text: string;
-  }): Promise<LarkMessageBotResDto> {
-    return await this.send({
-      channelName: params.channelName,
-      body: {msg_type: 'text', content: {text: params.text}},
-    });
-  }
-
-  async send(req: LarkMessageBotReqDto): Promise<LarkMessageBotResDto> {
+  async sendMessage(
+    req: LarkMessageBotSendMessageReqDto
+  ): Promise<LarkMessageBotSendMessageResDto> {
     const {channelName, body} = req;
     const channel = await this.prisma.messageBotChannel.findUniqueOrThrow({
       where: {
@@ -85,21 +79,22 @@ export class LarkMessageBotService {
       },
     });
 
-    const result: LarkMessageBotResDto = await this.httpService.axiosRef
-      .post<LarkWebhookPostBodyDto, AxiosResponse<LarkWebhookPostResDto>>(
-        channel.webhook,
-        body
-      )
-      .then(res => {
-        if (res.data.code === LarkWebhookSendStatus.Succeeded) {
-          return {res: res.data};
-        } else {
-          return {error: res.data};
-        }
-      })
-      .catch((e: AxiosError) => {
-        return {error: {message: e.message, response: e.response}};
-      });
+    const result: LarkMessageBotSendMessageResDto =
+      await this.httpService.axiosRef
+        .post<
+          LarkMessageBotSendMessageReqBody,
+          AxiosResponse<LarkMessageBotSendMessageRes>
+        >(channel.webhook, body)
+        .then(res => {
+          if (res.data.code === LarkWebhookSendStatus.Succeeded) {
+            return {res: res.data};
+          } else {
+            return {error: res.data};
+          }
+        })
+        .catch((e: AxiosError) => {
+          return {error: {message: e.message, response: e.response}};
+        });
 
     await this.prisma.messageBotRecord.update({
       where: {id: newRecord.id},
@@ -112,5 +107,15 @@ export class LarkMessageBotService {
     });
 
     return result;
+  }
+
+  async sendText(params: {
+    channelName: string;
+    text: string;
+  }): Promise<LarkMessageBotSendMessageResDto> {
+    return await this.sendMessage({
+      channelName: params.channelName,
+      body: {msg_type: 'text', content: {text: params.text}},
+    });
   }
 }

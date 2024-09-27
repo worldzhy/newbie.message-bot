@@ -1,84 +1,34 @@
 import {ApiProperty} from '@nestjs/swagger';
-import {
-  IsObject,
-  IsString,
-  ValidateNested,
-  IsDefined,
-  IsOptional,
-  IsBoolean,
-} from 'class-validator';
+import {IsString, ValidateNested, IsDefined} from 'class-validator';
 import {Type} from 'class-transformer';
-import {SlackWebhookMessageType} from './slack.constants';
+import {SlackMessageBotSendMessageReqBody} from './slack.interface';
 
-export type SlackWebhookPostResDto = string;
-export class SlackWebhookPostBodyDto {
-  @ApiProperty({
-    type: String,
-  })
-  @IsString()
-  [SlackWebhookMessageType.Text]: string;
-
-  @ApiProperty({
-    type: Object,
-    isArray: true,
-    required: false,
-  })
-  @IsObject()
-  @IsOptional()
-  [SlackWebhookMessageType.Blocks]?: object[];
-
-  @ApiProperty({
-    type: Object,
-    isArray: true,
-    required: false,
-  })
-  @IsObject()
-  @IsOptional()
-  [SlackWebhookMessageType.Attachments]?: object[];
-
-  @ApiProperty({
-    type: String,
-    required: false,
-  })
-  @IsString()
-  @IsOptional()
-  [SlackWebhookMessageType.Thread_ts]?: string;
-
-  @ApiProperty({
-    type: Boolean,
-    required: false,
-  })
-  @IsBoolean()
-  @IsOptional()
-  [SlackWebhookMessageType.Mrkdwn]?: boolean;
-}
-
-export class SlackMessageBotReqDto {
-  @ApiProperty({
-    type: String,
-  })
+export class SlackMessageBotSendMessageReqDto {
+  @ApiProperty({type: String})
   @IsString()
   channelName: string;
 
-  @ApiProperty({
-    type: SlackWebhookPostBodyDto,
-  })
-  @Type(() => SlackWebhookPostBodyDto)
+  @ApiProperty({type: SlackMessageBotSendMessageReqBody})
+  @Type(() => SlackMessageBotSendMessageReqBody)
   @ValidateNested()
   @IsDefined()
-  body: SlackWebhookPostBodyDto;
+  body: SlackMessageBotSendMessageReqBody;
 }
 
-export class SlackMessageBotResDto {
-  @ApiProperty({
-    type: String,
-    required: false,
-  })
+export class SlackMessageBotSendTextMessageReqDto {
+  @ApiProperty({type: String})
+  @IsString()
+  channelName: string;
+
+  @ApiProperty({type: String})
+  @IsString()
+  text: string;
+}
+
+export class SlackMessageBotSendMessageResDto {
+  @ApiProperty({type: String, required: false})
   res?: string;
 
-  @ApiProperty({
-    type: Object,
-    required: false,
-  })
+  @ApiProperty({type: Object, required: false})
   error?: object;
 }

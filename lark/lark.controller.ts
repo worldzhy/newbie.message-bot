@@ -5,15 +5,19 @@ import {Prisma} from '@prisma/client';
 import {CommonCUDResDto} from '@framework/common.dto';
 import {LarkMessageBotService} from './lark.service';
 import {
-  MessageBotChannelCreateReqDto,
-  MessageBotChannelUpdateReqDto,
-  MessageBotChannelListReqDto,
-  MessageBotChannelListResDto,
-  MessageBotRecordListReqDto,
-  MessageBotRecordListResDto,
+  MessageBotCreateChannelReqDto,
+  MessageBotUpdateChannelReqDto,
+  MessageBotListChannelsReqDto,
+  MessageBotListChannelsResDto,
+  MessageBotListMessagesReqDto,
+  MessageBotListMessagesResDto,
 } from '../message-bot.dto';
 import {MessageBotPlatform} from '../message-bot.constants';
-import {LarkMessageBotReqDto, LarkMessageBotResDto} from './lark.dto';
+import {
+  LarkMessageBotSendMessageReqDto,
+  LarkMessageBotSendMessageResDto,
+  LarkMessageBotSendTextMessageReqDto,
+} from './lark.dto';
 
 @ApiTags('Message Bot')
 @ApiBearerAuth()
@@ -24,57 +28,59 @@ export class LarkMessageBotController {
     private readonly prisma: PrismaService
   ) {}
 
-  @Post('channel/create')
+  @Post('channels/create')
   @ApiResponse({
     type: CommonCUDResDto,
   })
   async createChannel(
     @Body()
-    body: MessageBotChannelCreateReqDto
+    body: MessageBotCreateChannelReqDto
   ) {
     return await this.larkMessageBotService.createChannel(body);
   }
 
-  @Post('channel/update')
+  @Post('channels/update')
   @ApiResponse({
     type: CommonCUDResDto,
   })
   async updateChannel(
     @Body()
-    body: MessageBotChannelUpdateReqDto
+    body: MessageBotUpdateChannelReqDto
   ) {
     return await this.larkMessageBotService.updateChannel(body);
   }
 
-  @Post('channel/delete')
+  @Post('channels/delete')
   @ApiResponse({
     type: CommonCUDResDto,
   })
   async deleteChannel(
     @Body()
-    body: MessageBotChannelUpdateReqDto
+    body: MessageBotUpdateChannelReqDto
   ) {
     return await this.larkMessageBotService.deleteChannel(body);
   }
 
-  @Get('channel/list')
+  @Get('channels/list')
   @ApiResponse({
-    type: MessageBotChannelListResDto,
+    type: MessageBotListChannelsResDto,
   })
-  async listChannels(@Query() query: MessageBotChannelListReqDto) {
+  async listChannels(@Query() query: MessageBotListChannelsReqDto) {
     const {page, pageSize} = query;
     return this.prisma.findManyInManyPages({
       model: Prisma.ModelName.MessageBotChannel,
       pagination: {page, pageSize},
-      findManyArgs: {where: {deletedAt: null, platform: MessageBotPlatform.Lark}},
+      findManyArgs: {
+        where: {deletedAt: null, platform: MessageBotPlatform.Lark},
+      },
     });
   }
 
-  @Get('record/list')
+  @Get('messages/list')
   @ApiResponse({
-    type: MessageBotRecordListResDto,
+    type: MessageBotListMessagesResDto,
   })
-  async listRecord(@Query() query: MessageBotRecordListReqDto) {
+  async listMessages(@Query() query: MessageBotListMessagesReqDto) {
     const {page, pageSize, channelId} = query;
     return this.prisma.findManyInManyPages({
       model: Prisma.ModelName.MessageBotRecord,
@@ -86,11 +92,19 @@ export class LarkMessageBotController {
     });
   }
 
-  @Post('send')
+  @Post('messages/send')
   @ApiResponse({
-    type: LarkMessageBotResDto,
+    type: LarkMessageBotSendMessageResDto,
   })
-  async send(@Body() body: LarkMessageBotReqDto) {
-    return await this.larkMessageBotService.send(body);
+  async sendMessage(@Body() body: LarkMessageBotSendMessageReqDto) {
+    return await this.larkMessageBotService.sendMessage(body);
+  }
+
+  @Post('messages/send-text')
+  @ApiResponse({
+    type: LarkMessageBotSendMessageResDto,
+  })
+  async sendTextMessage(@Body() body: LarkMessageBotSendTextMessageReqDto) {
+    return await this.larkMessageBotService.sendText(body);
   }
 }
