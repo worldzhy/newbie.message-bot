@@ -3,6 +3,7 @@ import {AxiosError, AxiosResponse} from 'axios';
 import {Injectable, BadRequestException} from '@nestjs/common';
 import {PrismaService} from '@framework/prisma/prisma.service';
 import {
+  SlackMessageBotSendTextMessageReqDto,
   SlackMessageBotSendMessageReqDto,
   SlackMessageBotSendMessageResDto,
 } from './slack.dto';
@@ -110,13 +111,12 @@ export class SlackMessageBotService {
     return result;
   }
 
-  // async sendText(params: {
-  //   channelName: string;
-  //   text: string;
-  // }): Promise<SlackMessageBotSendMessageResDto> {
-  //   return await this.sendMessage({
-  //     channelName: params.channelName,
-  //     body: {msg_type: 'text', content: {text: params.text}},
-  //   });
-  // }
+  async sendText(
+    params: SlackMessageBotSendTextMessageReqDto
+  ): Promise<SlackMessageBotSendMessageResDto> {
+    return await this.sendMessage({
+      channelName: params.channelName,
+      body: {text: params.text},
+    });
+  }
 }

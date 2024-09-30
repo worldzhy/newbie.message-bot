@@ -102,11 +102,11 @@ export class SlackMessageBotController {
     return await this.slackMessageBotService.sendMessage(body);
   }
 
-  // @Post('messages/send-text')
-  // @ApiResponse({
-  //   type: SlackMessageBotSendMessageResDto,
-  // })
-  // async sendText(@Body() body: SlackMessageBotSendTextMessageReqDto) {
-  //   return await this.slackMessageBotService.sendText(body);
-  // }
+  @Post('messages/send-text')
+  @ApiResponse({
+    type: SlackMessageBotSendMessageResDto,
+  })
+  async sendText(@Body() body: SlackMessageBotSendTextMessageReqDto) {
+    return await this.slackMessageBotService.sendText(body);
+  }
 }

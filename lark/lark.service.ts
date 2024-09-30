@@ -4,6 +4,7 @@ import {Injectable, BadRequestException} from '@nestjs/common';
 import {PrismaService} from '@framework/prisma/prisma.service';
 import {LarkWebhookSendStatus} from './lark.constants';
 import {
+  LarkMessageBotSendTextMessageReqDto,
   LarkMessageBotSendMessageReqDto,
   LarkMessageBotSendMessageResDto,
 } from './lark.dto';
@@ -109,10 +110,9 @@ export class LarkMessageBotService {
     return result;
   }
 
-  async sendText(params: {
-    channelName: string;
-    text: string;
-  }): Promise<LarkMessageBotSendMessageResDto> {
+  async sendText(
+    params: LarkMessageBotSendTextMessageReqDto
+  ): Promise<LarkMessageBotSendMessageResDto> {
     return await this.sendMessage({
       channelName: params.channelName,
       body: {msg_type: 'text', content: {text: params.text}},
