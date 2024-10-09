@@ -80,6 +80,7 @@ export class SlackMessageBotService {
     const newRecord = await this.prisma.messageBotRecord.create({
       data: {
         channelId: channel.id,
+        webhook: channel.webhook,
         status: MessageBotRecordStatus.Pending,
         request: body as object,
       },

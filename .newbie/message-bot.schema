@@ -22,6 +22,7 @@ model MessageBotChannel {
 
 model MessageBotRecord {
   id        Int               @id @default(autoincrement())
+  webhook   String
   request   Json
   response  Json?
   status    String // pending, succeeded, failed
