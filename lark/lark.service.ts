@@ -62,14 +62,9 @@ export class LarkMessageBotService {
   async sendMessage(
     req: LarkMessageBotSendMessageReqDto
   ): Promise<LarkMessageBotSendMessageResDto> {
-    const {channelName, body} = req;
+    const {channelId, body} = req;
     const channel = await this.prisma.messageBotChannel.findUniqueOrThrow({
-      where: {
-        name_platform: {
-          name: channelName,
-          platform: MessageBotPlatform.Lark,
-        },
-      },
+      where: {id: channelId},
     });
 
     const newRecord = await this.prisma.messageBotRecord.create({
@@ -115,7 +110,7 @@ export class LarkMessageBotService {
     params: LarkMessageBotSendTextMessageReqDto
   ): Promise<LarkMessageBotSendMessageResDto> {
     return await this.sendMessage({
-      channelName: params.channelName,
+      channelId: params.channelId,
       body: {msg_type: 'text', content: {text: params.text}},
     });
   }

@@ -1,6 +1,6 @@
 export enum MessageBotPlatform {
-  Lark = 'lark',
-  Slack = 'slack',
+  Lark = 'Lark',
+  Slack = 'Slack',
 }
 
 export enum MessageBotRecordStatus {

@@ -27,9 +27,7 @@ export class SlackMessageBotService {
     private readonly prisma: PrismaService
   ) {}
 
-  async createChannel(
-    body: MessageBotCreateChannelReqDto
-  ): Promise<{id: number}> {
+  async createChannel(body: MessageBotCreateChannelReqDto) {
     const {name} = body;
     const channel = await this.prisma.messageBotChannel.findFirst({
       where: {name, platform: MessageBotPlatform.Slack},
@@ -43,9 +41,7 @@ export class SlackMessageBotService {
     });
   }
 
-  async updateChannel(
-    body: MessageBotUpdateChannelReqDto
-  ): Promise<{id: number}> {
+  async updateChannel(body: MessageBotUpdateChannelReqDto) {
     const {id} = body;
     return await this.prisma.messageBotChannel.update({
       where: {id},
@@ -53,9 +49,7 @@ export class SlackMessageBotService {
     });
   }
 
-  async deleteChannel(
-    body: MessageBotUpdateChannelReqDto
-  ): Promise<{id: number}> {
+  async deleteChannel(body: MessageBotUpdateChannelReqDto) {
     const {id} = body;
 
     return await this.prisma.messageBotChannel.update({
@@ -67,14 +61,9 @@ export class SlackMessageBotService {
   async sendMessage(
     req: SlackMessageBotSendMessageReqDto
   ): Promise<SlackMessageBotSendMessageResDto> {
-    const {channelName, body} = req;
+    const {channelId, body} = req;
     const channel = await this.prisma.messageBotChannel.findUniqueOrThrow({
-      where: {
-        name_platform: {
-          name: channelName,
-          platform: MessageBotPlatform.Slack,
-        },
-      },
+      where: {id: channelId},
     });
 
     const newRecord = await this.prisma.messageBotRecord.create({
@@ -116,7 +105,7 @@ export class SlackMessageBotService {
     params: SlackMessageBotSendTextMessageReqDto
   ): Promise<SlackMessageBotSendMessageResDto> {
     return await this.sendMessage({
-      channelName: params.channelName,
+      channelId: params.channelId,
       body: {text: params.text},
     });
   }

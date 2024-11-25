@@ -6,7 +6,7 @@ import {LarkMessageBotSendMessageReqBody} from './lark.interface';
 export class LarkMessageBotSendMessageReqDto {
   @ApiProperty({type: String})
   @IsString()
-  channelName: string;
+  channelId: string;
 
   @ApiProperty({type: LarkMessageBotSendMessageReqBody})
   @Type(() => LarkMessageBotSendMessageReqBody)
@@ -18,7 +18,7 @@ export class LarkMessageBotSendMessageReqDto {
 export class LarkMessageBotSendTextMessageReqDto {
   @ApiProperty({type: String})
   @IsString()
-  channelName: string;
+  channelId: string;
 
   @ApiProperty({type: String})
   @IsString()

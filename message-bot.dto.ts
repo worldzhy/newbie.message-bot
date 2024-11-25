@@ -31,10 +31,10 @@ export class MessageBotCreateChannelReqDto {
 
 export class MessageBotUpdateChannelReqDto {
   @ApiProperty({
-    type: Number,
+    type: String,
   })
   @IsNumber()
-  id: number;
+  id: string;
 
   @ApiProperty({
     type: String,
@@ -107,12 +107,11 @@ export class MessageBotListChannelsResDto {
 
 export class MessageBotListMessagesReqDto extends CommonPaginationReqDto {
   @ApiProperty({
-    type: Number,
+    type: String,
   })
   @IsNotEmpty()
-  @IsNumber()
-  @Type(() => Number)
-  channelId: number;
+  @IsString()
+  channelId: string;
 }
 
 class MessageBotRecordDetailResDto {
