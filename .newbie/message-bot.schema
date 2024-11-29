@@ -29,7 +29,7 @@ model MessageBotRecord {
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
   channel   MessageBotChannel @relation(fields: [channelId], references: [id])
-  channelId String
+  channelId String @db.Uuid
 
   @@schema("microservice/message-bot")
 }
