@@ -1,7 +1,8 @@
 import {HttpService} from '@nestjs/axios';
 import {AxiosResponse, AxiosError} from 'axios';
-import {Injectable, BadRequestException} from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import {PrismaService} from '@framework/prisma/prisma.service';
+import {MessageBotRecordStatus} from '../message-bot.constants';
 import {LarkWebhookSendStatus} from './lark.constants';
 import {
   LarkMessageBotSendTextMessageReqDto,
@@ -9,17 +10,9 @@ import {
   LarkMessageBotSendMessageResDto,
 } from './lark.dto';
 import {
-  MessageBotCreateChannelReqDto,
-  MessageBotUpdateChannelReqDto,
-} from '../message-bot.dto';
-import {
   LarkMessageBotSendMessageRes,
   LarkMessageBotSendMessageReqBody,
 } from './lark.interface';
-import {
-  MessageBotPlatform,
-  MessageBotRecordStatus,
-} from '../message-bot.constants';
 
 @Injectable()
 export class LarkMessageBotService {
@@ -27,37 +20,6 @@ export class LarkMessageBotService {
     private httpService: HttpService,
     private readonly prisma: PrismaService
   ) {}
-
-  async createChannel(body: MessageBotCreateChannelReqDto) {
-    const {name} = body;
-    const channel = await this.prisma.messageBotChannel.findFirst({
-      where: {name, platform: MessageBotPlatform.Lark},
-    });
-    if (channel) {
-      throw new BadRequestException('Channel name already exists');
-    }
-
-    return await this.prisma.messageBotChannel.create({
-      data: {...body, platform: MessageBotPlatform.Lark},
-    });
-  }
-
-  async updateChannel(body: MessageBotUpdateChannelReqDto) {
-    const {id} = body;
-    return await this.prisma.messageBotChannel.update({
-      where: {id},
-      data: {...body},
-    });
-  }
-
-  async deleteChannel(body: MessageBotUpdateChannelReqDto) {
-    const {id} = body;
-
-    return await this.prisma.messageBotChannel.update({
-      where: {id},
-      data: {deletedAt: new Date()},
-    });
-  }
 
   async sendMessage(
     req: LarkMessageBotSendMessageReqDto

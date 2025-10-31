@@ -1,12 +1,19 @@
 import {Module, Global} from '@nestjs/common';
-import {LarkMessageBotController} from './lark/lark.controller';
+import {LarkChannelController} from './lark/lark-channel.controller';
+import {LarkMessageController} from './lark/lark-message.controller';
 import {LarkMessageBotService} from './lark/lark.service';
-import {SlackMessageBotController} from './slack/slack.controller';
+import {SlackChannelController} from './slack/slack-channel.controller';
+import {SlackMessageController} from './slack/slack-message.controller';
 import {SlackMessageBotService} from './slack/slack.service';
 
 @Global()
 @Module({
-  controllers: [LarkMessageBotController, SlackMessageBotController],
+  controllers: [
+    LarkChannelController,
+    LarkMessageController,
+    SlackChannelController,
+    SlackMessageController,
+  ],
   providers: [LarkMessageBotService, SlackMessageBotService],
   exports: [LarkMessageBotService, SlackMessageBotService],
 })

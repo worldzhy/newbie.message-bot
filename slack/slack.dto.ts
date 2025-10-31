@@ -3,7 +3,7 @@ import {IsString, ValidateNested, IsDefined} from 'class-validator';
 import {Type} from 'class-transformer';
 import {SlackMessageBotSendMessageReqBody} from './slack.interface';
 
-export class SlackMessageBotSendMessageReqDto {
+export class SendSlackMessageRequestDto {
   @ApiProperty({type: String})
   @IsString()
   channelId: string;
@@ -15,7 +15,7 @@ export class SlackMessageBotSendMessageReqDto {
   body: SlackMessageBotSendMessageReqBody;
 }
 
-export class SlackMessageBotSendTextMessageReqDto {
+export class SendSlackTextMessageRequestDto {
   @ApiProperty({type: String})
   @IsString()
   channelId: string;
@@ -25,7 +25,7 @@ export class SlackMessageBotSendTextMessageReqDto {
   text: string;
 }
 
-export class SlackMessageBotSendMessageResDto {
+export class SendSlackMessageResponseDto {
   @ApiProperty({type: String, required: false})
   res?: string;
 
