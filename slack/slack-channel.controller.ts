@@ -1,13 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Get,
-  Query,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import {Controller, Post, Body, Get, Query, Patch, Param, Delete} from '@nestjs/common';
 import {ApiTags, ApiBearerAuth, ApiResponse} from '@nestjs/swagger';
 import {PrismaService} from '@framework/prisma/prisma.service';
 import {Prisma} from '@prisma/client';
@@ -33,10 +24,7 @@ export class SlackChannelController {
   }
 
   @Patch(':id')
-  async channelUpdate(
-    @Param('id') id: string,
-    @Body() body: UpdateMessageBotChannelRequestDto
-  ) {
+  async channelUpdate(@Param('id') id: string, @Body() body: UpdateMessageBotChannelRequestDto) {
     return await this.prisma.messageBotChannel.update({
       where: {id},
       data: body,

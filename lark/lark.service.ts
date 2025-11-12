@@ -9,10 +9,7 @@ import {
   LarkMessageBotSendMessageReqDto,
   LarkMessageBotSendMessageResDto,
 } from './lark.dto';
-import {
-  LarkMessageBotSendMessageRes,
-  LarkMessageBotSendMessageReqBody,
-} from './lark.interface';
+import {LarkMessageBotSendMessageRes, LarkMessageBotSendMessageReqBody} from './lark.interface';
 
 @Injectable()
 export class LarkMessageBotService {
@@ -21,9 +18,7 @@ export class LarkMessageBotService {
     private readonly prisma: PrismaService
   ) {}
 
-  async sendMessage(
-    req: LarkMessageBotSendMessageReqDto
-  ): Promise<LarkMessageBotSendMessageResDto> {
+  async sendMessage(req: LarkMessageBotSendMessageReqDto): Promise<LarkMessageBotSendMessageResDto> {
     const {channelId, body} = req;
     const channel = await this.prisma.messageBotChannel.findUniqueOrThrow({
       where: {id: channelId},
@@ -38,39 +33,31 @@ export class LarkMessageBotService {
       },
     });
 
-    const result: LarkMessageBotSendMessageResDto =
-      await this.httpService.axiosRef
-        .post<
-          LarkMessageBotSendMessageReqBody,
-          AxiosResponse<LarkMessageBotSendMessageRes>
-        >(channel.webhook, body)
-        .then(res => {
-          if (res.data.code === LarkWebhookSendStatus.Succeeded) {
-            return {res: res.data};
-          } else {
-            return {error: res.data};
-          }
-        })
-        .catch((e: AxiosError) => {
-          return {error: {message: e.message, response: e.response}};
-        });
+    const result: LarkMessageBotSendMessageResDto = await this.httpService.axiosRef
+      .post<LarkMessageBotSendMessageReqBody, AxiosResponse<LarkMessageBotSendMessageRes>>(channel.webhook, body)
+      .then(res => {
+        if (res.data.code === LarkWebhookSendStatus.Succeeded) {
+          return {res: res.data};
+        } else {
+          return {error: res.data};
+        }
+      })
+      .catch((e: AxiosError) => {
+        return {error: {message: e.message, response: e.response}};
+      });
 
     await this.prisma.messageBotRecord.update({
       where: {id: newRecord.id},
       data: {
         response: result as object,
-        status: result.error
-          ? MessageBotRecordStatus.Failed
-          : MessageBotRecordStatus.Succeeded,
+        status: result.error ? MessageBotRecordStatus.Failed : MessageBotRecordStatus.Succeeded,
       },
     });
 
     return result;
   }
 
-  async sendText(
-    params: LarkMessageBotSendTextMessageReqDto
-  ): Promise<LarkMessageBotSendMessageResDto> {
+  async sendText(params: LarkMessageBotSendTextMessageReqDto): Promise<LarkMessageBotSendMessageResDto> {
     return await this.sendMessage({
       channelId: params.channelId,
       body: {msg_type: 'text', content: {text: params.text}},

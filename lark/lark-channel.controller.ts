@@ -1,13 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Get,
-  Query,
-  Delete,
-  Param,
-  Patch,
-} from '@nestjs/common';
+import {Controller, Post, Body, Get, Query, Delete, Param, Patch} from '@nestjs/common';
 import {ApiTags, ApiBearerAuth, ApiResponse} from '@nestjs/swagger';
 import {PrismaService} from '@framework/prisma/prisma.service';
 import {Prisma} from '@prisma/client';
@@ -46,10 +37,7 @@ export class LarkChannelController {
   }
 
   @Patch(':id')
-  async updateChannel(
-    @Param('id') id: string,
-    @Body() body: UpdateMessageBotChannelRequestDto
-  ) {
+  async updateChannel(@Param('id') id: string, @Body() body: UpdateMessageBotChannelRequestDto) {
     return await this.prisma.messageBotChannel.update({
       where: {id},
       data: body,

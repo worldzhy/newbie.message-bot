@@ -8,12 +8,7 @@ import {SlackMessageBotService} from './slack/slack.service';
 
 @Global()
 @Module({
-  controllers: [
-    LarkChannelController,
-    LarkMessageController,
-    SlackChannelController,
-    SlackMessageController,
-  ],
+  controllers: [LarkChannelController, LarkMessageController, SlackChannelController, SlackMessageController],
   providers: [LarkMessageBotService, SlackMessageBotService],
   exports: [LarkMessageBotService, SlackMessageBotService],
 })

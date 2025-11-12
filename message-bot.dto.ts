@@ -1,9 +1,6 @@
 import {ApiProperty} from '@nestjs/swagger';
 import {IsString, IsNumber, IsOptional, IsNotEmpty} from 'class-validator';
-import {
-  CommonListRequestDto,
-  CommonListResponseDto,
-} from '@framework/common.dto';
+import {CommonListRequestDto, CommonListResponseDto} from '@framework/common.dto';
 import {MessageBotRecordStatus} from './message-bot.constants';
 
 class MessageBotChannelDetailResDto {

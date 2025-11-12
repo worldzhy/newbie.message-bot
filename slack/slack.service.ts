@@ -3,15 +3,8 @@ import {AxiosError, AxiosResponse} from 'axios';
 import {Injectable} from '@nestjs/common';
 import {PrismaService} from '@framework/prisma/prisma.service';
 import {MessageBotRecordStatus} from '../message-bot.constants';
-import {
-  SendSlackMessageRequestDto,
-  SendSlackMessageResponseDto,
-  SendSlackTextMessageRequestDto,
-} from './slack.dto';
-import {
-  SlackMessageBotSendMessageReqBody,
-  SlackMessageBotSendMessageRes,
-} from './slack.interface';
+import {SendSlackMessageRequestDto, SendSlackMessageResponseDto, SendSlackTextMessageRequestDto} from './slack.dto';
+import {SlackMessageBotSendMessageReqBody, SlackMessageBotSendMessageRes} from './slack.interface';
 
 @Injectable()
 export class SlackMessageBotService {
@@ -20,9 +13,7 @@ export class SlackMessageBotService {
     private readonly prisma: PrismaService
   ) {}
 
-  async sendMessage(
-    req: SendSlackMessageRequestDto
-  ): Promise<SendSlackMessageResponseDto> {
+  async sendMessage(req: SendSlackMessageRequestDto): Promise<SendSlackMessageResponseDto> {
     const {channelId, body} = req;
     const channel = await this.prisma.messageBotChannel.findUniqueOrThrow({
       where: {id: channelId},
@@ -38,10 +29,7 @@ export class SlackMessageBotService {
     });
 
     const result: SendSlackMessageResponseDto = await this.httpService.axiosRef
-      .post<
-        SlackMessageBotSendMessageReqBody,
-        AxiosResponse<SlackMessageBotSendMessageRes>
-      >(channel.webhook, body)
+      .post<SlackMessageBotSendMessageReqBody, AxiosResponse<SlackMessageBotSendMessageRes>>(channel.webhook, body)
       .then(res => {
         return {res: res.data};
       })
@@ -53,18 +41,14 @@ export class SlackMessageBotService {
       where: {id: newRecord.id},
       data: {
         response: result as object,
-        status: result.error
-          ? MessageBotRecordStatus.Failed
-          : MessageBotRecordStatus.Succeeded,
+        status: result.error ? MessageBotRecordStatus.Failed : MessageBotRecordStatus.Succeeded,
       },
     });
 
     return result;
   }
 
-  async sendText(
-    params: SendSlackTextMessageRequestDto
-  ): Promise<SendSlackMessageResponseDto> {
+  async sendText(params: SendSlackTextMessageRequestDto): Promise<SendSlackMessageResponseDto> {
     return await this.sendMessage({
       channelId: params.channelId,
       body: {text: params.text},

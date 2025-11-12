@@ -3,10 +3,7 @@ import {ApiTags, ApiBearerAuth, ApiResponse} from '@nestjs/swagger';
 import {PrismaService} from '@framework/prisma/prisma.service';
 import {Prisma} from '@prisma/client';
 import {LarkMessageBotService} from './lark.service';
-import {
-  ListMessageBotMessagesRequestDto,
-  ListMessageBotMessagesResponseDto,
-} from '../message-bot.dto';
+import {ListMessageBotMessagesRequestDto, ListMessageBotMessagesResponseDto} from '../message-bot.dto';
 import {
   LarkMessageBotSendMessageReqDto,
   LarkMessageBotSendMessageResDto,

@@ -3,15 +3,8 @@ import {ApiTags, ApiBearerAuth, ApiResponse} from '@nestjs/swagger';
 import {PrismaService} from '@framework/prisma/prisma.service';
 import {Prisma} from '@prisma/client';
 import {SlackMessageBotService} from '@microservices/message-bot/slack/slack.service';
-import {
-  ListMessageBotMessagesRequestDto,
-  ListMessageBotMessagesResponseDto,
-} from '../message-bot.dto';
-import {
-  SendSlackMessageRequestDto,
-  SendSlackMessageResponseDto,
-  SendSlackTextMessageRequestDto,
-} from './slack.dto';
+import {ListMessageBotMessagesRequestDto, ListMessageBotMessagesResponseDto} from '../message-bot.dto';
+import {SendSlackMessageRequestDto, SendSlackMessageResponseDto, SendSlackTextMessageRequestDto} from './slack.dto';
 
 @ApiTags('Message Bot / Slack Message')
 @ApiBearerAuth()
