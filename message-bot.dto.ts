@@ -78,7 +78,7 @@ export class CreateMessageBotChannelRequestDto {
 
 export class UpdateMessageBotChannelRequestDto {
   @ApiProperty({type: String})
-  @IsNumber()
+  @IsString()
   id: string;
 
   @ApiProperty({type: String, required: false})
