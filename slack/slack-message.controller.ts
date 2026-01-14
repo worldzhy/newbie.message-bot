@@ -1,7 +1,7 @@
-import {Controller, Post, Body, Get, Query} from '@nestjs/common';
-import {ApiTags, ApiBearerAuth, ApiResponse} from '@nestjs/swagger';
+import {Body, Controller, Get, Post, Query} from '@nestjs/common';
+import {ApiBearerAuth, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {PrismaService} from '@framework/prisma/prisma.service';
-import {Prisma} from '@prisma/client';
+import {Prisma} from '@generated/prisma/client';
 import {SlackMessageBotService} from '@microservices/message-bot/slack/slack.service';
 import {ListMessageBotMessagesRequestDto, ListMessageBotMessagesResponseDto} from '../message-bot.dto';
 import {SendSlackMessageRequestDto, SendSlackMessageResponseDto, SendSlackTextMessageRequestDto} from './slack.dto';
