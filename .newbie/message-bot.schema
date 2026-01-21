@@ -2,21 +2,38 @@
 // !!            [Microservice] MessageBot models                  //
 // !! ------------------------------------------------------------ //
 // * MessageBotChannel                                             //
+// * MessageBotChannelGroup                                        //
 // * MessageBotRecord                                              //
 // * ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ //
 
 model MessageBotChannel {
-  id          String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name        String
   description String?
   webhook     String
   platform    String // lark, slack ...
-  createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @updatedAt
+  createdAt   DateTime                @default(now())
+  updatedAt   DateTime                @updatedAt
   deletedAt   DateTime?
   records     MessageBotRecord[]
+  groupId     String?                 @db.Uuid
+  group       MessageBotChannelGroup? @relation(fields: [groupId], references: [id])
 
-  @@unique([name, platform])
+  @@unique([name, platform, groupId])
+  @@schema("microservice/message-bot")
+}
+
+model MessageBotChannelGroup {
+  id          String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String
+  description String?
+  sort        Int                 @default(0)
+  parentId    String?             @db.Uuid
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  deletedAt   DateTime?
+  channels    MessageBotChannel[]
+
   @@schema("microservice/message-bot")
 }
 
@@ -29,7 +46,7 @@ model MessageBotRecord {
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
   channel   MessageBotChannel @relation(fields: [channelId], references: [id])
-  channelId String @db.Uuid
+  channelId String            @db.Uuid
 
   @@schema("microservice/message-bot")
 }

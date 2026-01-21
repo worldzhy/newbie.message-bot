@@ -19,12 +19,12 @@ export class LarkChannelController {
   @Get('')
   @ApiResponse({type: ListMessageBotChannelsResponseDto})
   async listChannels(@Query() query: ListMessageBotChannelsRequestDto) {
-    const {page, pageSize} = query;
+    const {page, pageSize, groupId} = query;
     return this.prisma.findManyInManyPages({
       model: Prisma.ModelName.MessageBotChannel,
       pagination: {page, pageSize},
       findManyArgs: {
-        where: {deletedAt: null, platform: MessageBotPlatform.Lark},
+        where: {deletedAt: null, platform: MessageBotPlatform.Lark, groupId},
       },
     });
   }
