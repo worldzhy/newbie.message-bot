@@ -1,5 +1,5 @@
 import {ApiProperty} from '@nestjs/swagger';
-import {IsObject, IsString} from 'class-validator';
+import {IsObject, IsString, IsOptional} from 'class-validator';
 import {LarkWebhookMessageType} from './lark.constants';
 
 export class LarkMessageBotSendMessageRes {
@@ -18,7 +18,31 @@ export class LarkMessageBotSendMessageReqBody {
   @IsString()
   msg_type: string;
 
-  @ApiProperty({type: Object})
+  @ApiProperty({type: Object, required: false})
   @IsObject()
-  content: object;
+  @IsOptional()
+  content?: object;
+
+  @ApiProperty({type: Object, required: false, description: 'Card structure for interactive messages'})
+  @IsObject()
+  @IsOptional()
+  card?: object;
+
+  @ApiProperty({
+    type: String,
+    required: false,
+    description: 'Unix timestamp in seconds, required when signature verification is enabled',
+  })
+  @IsString()
+  @IsOptional()
+  timestamp?: string;
+
+  @ApiProperty({
+    type: String,
+    required: false,
+    description: 'HMAC-SHA256 signature, required when signature verification is enabled',
+  })
+  @IsString()
+  @IsOptional()
+  sign?: string;
 }
