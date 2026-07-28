@@ -1,6 +1,5 @@
 import {ApiProperty} from '@nestjs/swagger';
-import {IsString, ValidateNested, IsDefined} from 'class-validator';
-import {Type} from 'class-transformer';
+import {IsString, IsObject, IsDefined} from 'class-validator';
 import {LarkMessageBotSendMessageReqBody} from './lark.interface';
 
 export class LarkMessageBotSendMessageReqDto {
@@ -9,8 +8,7 @@ export class LarkMessageBotSendMessageReqDto {
   channelId: string;
 
   @ApiProperty({type: LarkMessageBotSendMessageReqBody})
-  @Type(() => LarkMessageBotSendMessageReqBody)
-  @ValidateNested()
+  @IsObject()
   @IsDefined()
   body: LarkMessageBotSendMessageReqBody;
 }
